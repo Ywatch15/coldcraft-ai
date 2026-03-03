@@ -11,6 +11,7 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp
 import { toast } from "@/hooks/use-toast";
 import { Zap, ArrowLeft, Loader2 } from "lucide-react";
 import Navbar from "@/components/Navbar";
+import ShaderBackground from "@/components/ui/animated-shader-background";
 
 const Auth = () => {
   const [searchParams] = useSearchParams();
@@ -76,13 +77,9 @@ const Auth = () => {
   };
 
   return (
-    <div className="relative min-h-screen bg-background">
+    <div className="relative min-h-screen bg-[#030303]">
+      <ShaderBackground />
       <Navbar />
-      {/* Animated background */}
-      <div className="pointer-events-none fixed inset-0">
-        <div className="absolute left-1/2 top-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/8 blur-[120px] animate-spiral" />
-        <div className="absolute right-1/4 top-1/4 h-[300px] w-[300px] rounded-full bg-accent/8 blur-[100px] animate-spiral" style={{ animationDelay: "-7s" }} />
-      </div>
 
       <div className="relative z-10 flex min-h-screen items-center justify-center px-4 pt-16">
         <motion.div
@@ -91,10 +88,10 @@ const Auth = () => {
           transition={{ duration: 0.4 }}
           className="w-full max-w-md"
         >
-          <Card className="border-border/50 bg-card/80 backdrop-blur-xl">
+          <Card className="border-white/[0.1] bg-black/60 backdrop-blur-2xl shadow-2xl">
             <CardHeader className="text-center">
-              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-accent">
-                <Zap className="h-6 w-6 text-primary-foreground" />
+              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-r from-indigo-500 to-rose-500">
+                <Zap className="h-6 w-6 text-white" />
               </div>
               <AnimatePresence mode="wait">
                 <motion.div
@@ -103,10 +100,10 @@ const Auth = () => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                 >
-                  <CardTitle className="text-2xl">
+                  <CardTitle className="text-2xl text-white">
                     {step === "otp" ? "Verify Your Email" : isLogin ? "Welcome Back" : "Create Account"}
                   </CardTitle>
-                  <CardDescription className="mt-1">
+                  <CardDescription className="mt-1 text-white/50">
                     {step === "otp"
                       ? `Enter the 6-digit code sent to ${email}`
                       : isLogin
@@ -129,37 +126,37 @@ const Auth = () => {
                     className="space-y-4"
                   >
                     <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
+                      <Label htmlFor="email" className="text-white/70">Email</Label>
                       <Input
                         id="email"
                         type="email"
                         placeholder="you@company.com"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="bg-background/50"
+                        className="border-white/[0.1] bg-white/[0.05] text-white placeholder:text-white/30 focus:border-indigo-500/50"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="password">Password</Label>
+                      <Label htmlFor="password" className="text-white/70">Password</Label>
                       <Input
                         id="password"
                         type="password"
                         placeholder="••••••••"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="bg-background/50"
+                        className="border-white/[0.1] bg-white/[0.05] text-white placeholder:text-white/30 focus:border-indigo-500/50"
                       />
                     </div>
-                    <Button type="submit" className="w-full bg-gradient-accent hover:opacity-90" disabled={loading}>
+                    <Button type="submit" className="w-full bg-gradient-to-r from-indigo-500 to-rose-500 text-white hover:opacity-90" disabled={loading}>
                       {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                       {isLogin ? "Sign In" : "Create Account"}
                     </Button>
-                    <p className="text-center text-sm text-muted-foreground">
+                    <p className="text-center text-sm text-white/40">
                       {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
                       <button
                         type="button"
                         onClick={() => setIsLogin(!isLogin)}
-                        className="font-medium text-primary hover:underline"
+                        className="font-medium text-indigo-400 hover:text-indigo-300 hover:underline"
                       >
                         {isLogin ? "Register" : "Sign In"}
                       </button>
@@ -185,13 +182,13 @@ const Auth = () => {
                         </InputOTPGroup>
                       </InputOTP>
                     </div>
-                    <Button onClick={handleOtp} className="w-full bg-gradient-accent hover:opacity-90" disabled={loading}>
+                    <Button onClick={handleOtp} className="w-full bg-gradient-to-r from-indigo-500 to-rose-500 text-white hover:opacity-90" disabled={loading}>
                       {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                       Verify & Continue
                     </Button>
                     <button
                       onClick={() => { setStep("credentials"); setOtp(""); }}
-                      className="flex w-full items-center justify-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+                      className="flex w-full items-center justify-center gap-1 text-sm text-white/40 hover:text-white/70"
                     >
                       <ArrowLeft className="h-3 w-3" />
                       Back

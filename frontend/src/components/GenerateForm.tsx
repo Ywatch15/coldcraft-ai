@@ -58,32 +58,32 @@ const GenerateForm = ({ onGenerate, loading }: Props) => {
   }, [handleSubmit]);
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4 rounded-xl border border-white/[0.08] bg-black/40 backdrop-blur-xl p-6">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
-          <Label htmlFor="recipientName" className="text-xs text-muted-foreground">Recipient Name *</Label>
-          <Input id="recipientName" placeholder="Sarah Chen" value={form.recipientName} onChange={(e) => update("recipientName", e.target.value)} className="bg-background/50" />
+          <Label htmlFor="recipientName" className="text-xs text-white/50">Recipient Name *</Label>
+          <Input id="recipientName" placeholder="Sarah Chen" value={form.recipientName} onChange={(e) => update("recipientName", e.target.value)} className="border-white/[0.1] bg-white/[0.05] text-white placeholder:text-white/30 focus:border-indigo-500/50" />
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="company" className="text-xs text-muted-foreground">Company *</Label>
-          <Input id="company" placeholder="Stripe" value={form.company} onChange={(e) => update("company", e.target.value)} className="bg-background/50" />
+          <Label htmlFor="company" className="text-xs text-white/50">Company *</Label>
+          <Input id="company" placeholder="Stripe" value={form.company} onChange={(e) => update("company", e.target.value)} className="border-white/[0.1] bg-white/[0.05] text-white placeholder:text-white/30 focus:border-indigo-500/50" />
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="role" className="text-xs text-muted-foreground">Role</Label>
-          <Input id="role" placeholder="Head of Partnerships" value={form.role} onChange={(e) => update("role", e.target.value)} className="bg-background/50" />
+          <Label htmlFor="role" className="text-xs text-white/50">Role</Label>
+          <Input id="role" placeholder="Head of Partnerships" value={form.role} onChange={(e) => update("role", e.target.value)} className="border-white/[0.1] bg-white/[0.05] text-white placeholder:text-white/30 focus:border-indigo-500/50" />
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="goal" className="text-xs text-muted-foreground">Goal *</Label>
-          <Input id="goal" placeholder="Schedule a demo call" value={form.goal} onChange={(e) => update("goal", e.target.value)} className="bg-background/50" />
+          <Label htmlFor="goal" className="text-xs text-white/50">Goal *</Label>
+          <Input id="goal" placeholder="Schedule a demo call" value={form.goal} onChange={(e) => update("goal", e.target.value)} className="border-white/[0.1] bg-white/[0.05] text-white placeholder:text-white/30 focus:border-indigo-500/50" />
         </div>
       </div>
       <div className="space-y-1.5">
-        <Label className="text-xs text-muted-foreground">Tone</Label>
+        <Label className="text-xs text-white/50">Tone</Label>
         <Select value={form.tone} onValueChange={(v) => update("tone", v)}>
-          <SelectTrigger className="bg-background/50">
+          <SelectTrigger className="border-white/[0.1] bg-white/[0.05] text-white">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="border-white/[0.1] bg-[#111] text-white">
             <SelectItem value="Professional">Professional</SelectItem>
             <SelectItem value="Casual">Casual</SelectItem>
             <SelectItem value="Formal">Formal</SelectItem>
@@ -92,19 +92,19 @@ const GenerateForm = ({ onGenerate, loading }: Props) => {
         </Select>
       </div>
       <div className="space-y-1.5">
-        <Label htmlFor="extraContext" className="text-xs text-muted-foreground">Extra Context</Label>
+        <Label htmlFor="extraContext" className="text-xs text-white/50">Extra Context</Label>
         <Textarea
           id="extraContext"
           placeholder="Any additional details or talking points..."
           value={form.extraContext}
           onChange={(e) => update("extraContext", e.target.value)}
-          className="min-h-[80px] bg-background/50"
+          className="min-h-[80px] border-white/[0.1] bg-white/[0.05] text-white placeholder:text-white/30 focus:border-indigo-500/50"
         />
       </div>
-      <Button type="submit" className="w-full bg-gradient-accent hover:opacity-90" disabled={loading || !form.recipientName || !form.company || !form.goal}>
+      <Button type="submit" className="w-full bg-gradient-to-r from-indigo-500 to-rose-500 text-white hover:opacity-90" disabled={loading || !form.recipientName || !form.company || !form.goal}>
         {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Send className="mr-2 h-4 w-4" />}
         {loading ? "Generating..." : "Generate Email"}
-        {!loading && <span className="ml-2 text-xs text-primary-foreground/60">⌘↵</span>}
+        {!loading && <span className="ml-2 text-xs text-white/60">⌘↵</span>}
       </Button>
     </form>
   );

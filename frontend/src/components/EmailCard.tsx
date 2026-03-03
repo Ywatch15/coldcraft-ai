@@ -15,18 +15,18 @@ const EmailCard = ({ email, selected, onClick }: Props) => {
       onClick={onClick}
       className={`w-full rounded-lg p-3 text-left transition-all duration-200 ${
         selected
-          ? "border border-primary/30 bg-primary/10"
-          : "border border-transparent hover:bg-secondary/50"
+          ? "border border-indigo-500/30 bg-indigo-500/10"
+          : "border border-transparent hover:bg-white/[0.05]"
       }`}
     >
       <div className="flex items-start gap-2.5">
-        <Mail className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+        <Mail className="mt-0.5 h-3.5 w-3.5 shrink-0 text-white/40" />
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-medium">{email.subject}</p>
-          <p className="truncate text-xs text-muted-foreground">
+          <p className="truncate text-sm font-medium text-white">{email.subject}</p>
+          <p className="truncate text-xs text-white/50">
             {email.metadata.recipientName} · {email.metadata.company}
           </p>
-          <p className="mt-0.5 text-xs text-muted-foreground/60">{timeAgo}</p>
+          <p className="mt-0.5 text-xs text-white/30">{timeAgo}</p>
         </div>
       </div>
     </button>

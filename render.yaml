@@ -1,0 +1,53 @@
+services:
+  # ─── Backend API ──────────────────────────────────────
+  - type: web
+    name: coldcraft-api
+    runtime: node
+    region: oregon
+    plan: free
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: node src/server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false
+      - key: DB_NAME
+        value: coldcraft
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_EXPIRY
+        value: 7d
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: FRONTEND_URL
+        fromService:
+          type: web
+          name: coldcraft-frontend
+          property: host
+    healthCheckPath: /api/health
+
+  # ─── Frontend (Static Site) ──────────────────────────
+  - type: web
+    name: coldcraft-frontend
+    runtime: static
+    region: oregon
+    plan: free
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: public, max-age=0, must-revalidate
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: coldcraft-api
+          property: host

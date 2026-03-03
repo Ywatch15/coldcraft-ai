@@ -1,4 +1,4 @@
-import type { GeneratedEmail } from "@/utils/mockData";
+import type { GeneratedEmail } from "@/utils/api";
 import { Mail } from "lucide-react";
 
 interface Props {

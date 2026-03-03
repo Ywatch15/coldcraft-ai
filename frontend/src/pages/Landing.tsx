@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
+import { useAuth } from "@/context/AuthContext";
 import { Zap, Mail, Brain, Clock, Target, Shield, Sparkles } from "lucide-react";
 
 const features = [
@@ -14,6 +15,8 @@ const features = [
 ];
 
 const Landing = () => {
+  const { isAuthenticated } = useAuth();
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -47,12 +50,20 @@ const Landing = () => {
               outreach that converts prospects into conversations.
             </p>
             <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-              <Button size="lg" className="bg-gradient-accent px-8 text-lg hover:opacity-90" asChild>
-                <Link to="/auth?mode=register">Get Started Free</Link>
-              </Button>
-              <Button size="lg" variant="outline" className="px-8 text-lg" asChild>
-                <Link to="/auth">Login</Link>
-              </Button>
+              {isAuthenticated ? (
+                <Button size="lg" className="bg-gradient-accent px-8 text-lg hover:opacity-90" asChild>
+                  <Link to="/dashboard">Let's Generate a Cold Email</Link>
+                </Button>
+              ) : (
+                <>
+                  <Button size="lg" className="bg-gradient-accent px-8 text-lg hover:opacity-90" asChild>
+                    <Link to="/auth?mode=register">Get Started Free</Link>
+                  </Button>
+                  <Button size="lg" variant="outline" className="px-8 text-lg" asChild>
+                    <Link to="/auth">Login</Link>
+                  </Button>
+                </>
+              )}
             </div>
           </motion.div>
         </div>
@@ -100,7 +111,7 @@ const Landing = () => {
 
       {/* Footer */}
       <footer className="border-t border-border/50 py-8 text-center text-sm text-muted-foreground">
-        <p>© 2024 ColdCraft. Built with AI-powered precision.</p>
+        <p>© {new Date().getFullYear()} ColdCraft. Built with AI-powered precision.</p>
       </footer>
     </div>
   );

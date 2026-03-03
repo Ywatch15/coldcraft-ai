@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Copy, Check, Mail } from "lucide-react";
 import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
-import type { GeneratedEmail } from "@/utils/mockData";
+import type { GeneratedEmail } from "@/utils/api";
 
 interface Props {
   email: GeneratedEmail | null;

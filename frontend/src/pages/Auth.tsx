@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
-import { MOCK_JWT } from "@/utils/mockData";
+import { authAPI } from "@/utils/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -35,16 +35,23 @@ const Auth = () => {
       return;
     }
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 1200));
-    setLoading(false);
 
-    if (isLogin) {
-      login(MOCK_JWT);
-      toast({ title: "Welcome back!", description: "Logged in successfully." });
-      navigate("/dashboard");
-    } else {
-      setStep("otp");
-      toast({ title: "OTP Sent", description: `Verification code sent to ${email}` });
+    try {
+      if (isLogin) {
+        const data = await authAPI.login(email, password);
+        login(data.token);
+        toast({ title: "Welcome back!", description: "Logged in successfully." });
+        navigate("/dashboard");
+      } else {
+        await authAPI.register(email, password);
+        setStep("otp");
+        toast({ title: "OTP Sent", description: `Verification code sent to ${email}` });
+      }
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Something went wrong";
+      toast({ title: "Error", description: message, variant: "destructive" });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -54,11 +61,18 @@ const Auth = () => {
       return;
     }
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 1000));
-    setLoading(false);
-    login(MOCK_JWT);
-    toast({ title: "Account verified!", description: "Welcome to ColdCraft." });
-    navigate("/dashboard");
+
+    try {
+      const data = await authAPI.verifyOtp(email, otp);
+      login(data.token);
+      toast({ title: "Account verified!", description: "Welcome to ColdCraft." });
+      navigate("/dashboard");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Verification failed";
+      toast({ title: "Error", description: message, variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

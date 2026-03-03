@@ -6,7 +6,10 @@ interface RequestOptions {
   token?: string;
 }
 
-export async function apiRequest(endpoint: string, options: RequestOptions = {}) {
+export async function apiRequest<T = Record<string, unknown>>(
+  endpoint: string,
+  options: RequestOptions = {}
+): Promise<T> {
   const { method = "GET", body, token } = options;
 
   const headers: Record<string, string> = {
@@ -27,5 +30,68 @@ export async function apiRequest(endpoint: string, options: RequestOptions = {})
     throw new Error(data.message || "Request failed");
   }
 
-  return data;
+  return data as T;
 }
+
+// ─── Auth helpers ────────────────────────────────────
+
+export const authAPI = {
+  register: (email: string, password: string) =>
+    apiRequest<{ message: string; _dev_otp?: string }>("/api/auth/register", {
+      method: "POST",
+      body: { email, password },
+    }),
+
+  verifyOtp: (email: string, otp: string) =>
+    apiRequest<{ token: string; user: { id: string; email: string } }>("/api/auth/verify-otp", {
+      method: "POST",
+      body: { email, otp },
+    }),
+
+  login: (email: string, password: string) =>
+    apiRequest<{ token: string; user: { id: string; email: string } }>("/api/auth/login", {
+      method: "POST",
+      body: { email, password },
+    }),
+};
+
+// ─── Email helpers ───────────────────────────────────
+
+export interface GeneratedEmail {
+  id: string;
+  subject: string;
+  body: string;
+  metadata: {
+    recipientName: string;
+    company: string;
+    role: string;
+    goal: string;
+    tone: string;
+  };
+  createdAt: string;
+}
+
+export const emailsAPI = {
+  generate: (
+    data: {
+      recipientName: string;
+      company: string;
+      role: string;
+      goal: string;
+      tone: string;
+      extraContext: string;
+    },
+    token: string
+  ) =>
+    apiRequest<GeneratedEmail>("/api/emails/generate", {
+      method: "POST",
+      body: data as unknown as Record<string, unknown>,
+      token,
+    }),
+
+  getAll: (token: string) =>
+    apiRequest<GeneratedEmail[]>("/api/emails", { token }),
+
+  getById: (id: string, token: string) =>
+    apiRequest<GeneratedEmail>(`/api/emails/${id}`, { token }),
+};

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { getMockEmails, generateMockEmail, GeneratedEmail } from "@/utils/mockData";
+import { emailsAPI, GeneratedEmail } from "@/utils/api";
 import GenerateForm, { EmailFormData } from "@/components/GenerateForm";
 import OutputPanel from "@/components/OutputPanel";
 import EmailCard from "@/components/EmailCard";
@@ -9,12 +9,13 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Plus, Zap, PanelLeftClose, PanelLeft, LogOut } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "@/hooks/use-toast";
 
 const Dashboard = () => {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, token, logout } = useAuth();
   const navigate = useNavigate();
 
-  const [emails, setEmails] = useState<GeneratedEmail[]>(getMockEmails);
+  const [emails, setEmails] = useState<GeneratedEmail[]>([]);
   const [selectedEmail, setSelectedEmail] = useState<GeneratedEmail | null>(null);
   const [generating, setGenerating] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -23,15 +24,31 @@ const Dashboard = () => {
     if (!isAuthenticated) navigate("/auth");
   }, [isAuthenticated, navigate]);
 
+  // Fetch email history on mount
+  useEffect(() => {
+    if (!token) return;
+    emailsAPI
+      .getAll(token)
+      .then((data) => setEmails(data))
+      .catch((err) => console.error("Failed to load emails:", err));
+  }, [token]);
+
   const handleGenerate = useCallback(async (data: EmailFormData) => {
+    if (!token) return;
     setGenerating(true);
     setSelectedEmail(null);
-    await new Promise((r) => setTimeout(r, 2000));
-    const newEmail = generateMockEmail(data);
-    setEmails((prev) => [newEmail, ...prev]);
-    setSelectedEmail(newEmail);
-    setGenerating(false);
-  }, []);
+
+    try {
+      const newEmail = await emailsAPI.generate(data, token);
+      setEmails((prev) => [newEmail, ...prev]);
+      setSelectedEmail(newEmail);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Failed to generate email";
+      toast({ title: "Error", description: message, variant: "destructive" });
+    } finally {
+      setGenerating(false);
+    }
+  }, [token]);
 
   const handleNewEmail = () => {
     setSelectedEmail(null);
@@ -56,7 +73,7 @@ const Dashboard = () => {
                 <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-accent">
                   <Zap className="h-3.5 w-3.5 text-primary-foreground" />
                 </div>
-                <span className="font-bold text-gradient">ColdCraft</span>
+                <Link to="/" className="font-bold text-gradient hover:opacity-80 transition-opacity">ColdCraft</Link>
               </div>
               <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setSidebarOpen(false)}>
                 <PanelLeftClose className="h-4 w-4" />

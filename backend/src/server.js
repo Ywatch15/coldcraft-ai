@@ -3,6 +3,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
+const fs = require("fs");
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/auth");
 const emailRoutes = require("./routes/emails");
@@ -44,14 +45,30 @@ app.get("/api/health", (_req, res) => {
 
 // ─── Serve Frontend (Production) ─────────────────────
 if (process.env.NODE_ENV === "production") {
-  const frontendDist = path.join(__dirname, "../../frontend/dist");
+  // Resolve relative to process CWD (which is repo root on Render)
+  const frontendDist = path.resolve(process.cwd(), "../frontend/dist");
+
+  // Startup check — log whether the dist folder exists
+  if (fs.existsSync(frontendDist)) {
+    console.log(`✓ Serving frontend from ${frontendDist}`);
+    console.log(`  Files: ${fs.readdirSync(frontendDist).join(", ")}`);
+  } else {
+    console.error(`✗ Frontend dist NOT found at ${frontendDist}`);
+    console.error(`  CWD: ${process.cwd()}`);
+    console.error(`  __dirname: ${__dirname}`);
+  }
 
   // Serve static assets (JS, CSS, images, etc.)
   app.use(express.static(frontendDist));
 
   // SPA fallback — serve index.html for any non-API route
   app.get("*", (_req, res) => {
-    res.sendFile(path.join(frontendDist, "index.html"));
+    const indexPath = path.join(frontendDist, "index.html");
+    if (fs.existsSync(indexPath)) {
+      res.sendFile(indexPath);
+    } else {
+      res.status(500).json({ error: "Frontend not built. index.html missing.", cwd: process.cwd(), dist: frontendDist });
+    }
   });
 }
 

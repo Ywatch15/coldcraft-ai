@@ -20,10 +20,12 @@ const allowedOrigins = [
 app.use(
   cors({
     origin(origin, callback) {
+      // Allow requests with no origin (same-origin, mobile apps, curl, Render health checks)
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
-        callback(new Error(`CORS blocked: ${origin}`));
+        console.warn(`CORS rejected origin: ${origin}`);
+        callback(null, false); // reject without crashing (sends proper CORS error, not 500)
       }
     },
     credentials: true,

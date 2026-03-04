@@ -21,6 +21,10 @@ services:
         value: 7d
       - key: GEMINI_API_KEY
         sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
       - key: FRONTEND_URL
         fromService:
           type: web

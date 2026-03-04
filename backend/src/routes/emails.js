@@ -2,6 +2,7 @@ const express = require("express");
 const Email = require("../models/Email");
 const { authMiddleware } = require("../middleware/auth");
 const { generateEmail } = require("../services/gemini");
+const { generateColdEmail } = require("../utils/roleTemplates");
 
 const router = express.Router();
 
@@ -21,15 +22,51 @@ router.post("/generate", async (req, res) => {
       });
     }
 
-    // Generate email via Gemini AI
-    const { subject, body } = await generateEmail({
-      recipientName,
-      company,
-      role: role || "",
-      goal,
-      tone: tone || "Professional",
-      extraContext: extraContext || "",
-    });
+    // Generate email — try Gemini AI first, fallback to template engine
+    let subject, body, source;
+
+    if (process.env.GEMINI_API_KEY) {
+      try {
+        const aiResult = await generateEmail({
+          recipientName,
+          company,
+          role: role || "",
+          goal,
+          tone: tone || "Professional",
+          extraContext: extraContext || "",
+        });
+        subject = aiResult.subject;
+        body = aiResult.body;
+        source = "ai";
+      } catch (aiErr) {
+        console.warn("Gemini failed, falling back to template engine:", aiErr.message);
+        // Fallback to template on any AI failure (rate limit, network, parse, etc.)
+        const tmpl = generateColdEmail({
+          recipientName,
+          company,
+          role: role || "",
+          goal: goal || "Schedule a demo call",
+          tone: tone || "Professional",
+          extraContext: extraContext || "",
+        });
+        subject = tmpl.subject;
+        body = tmpl.body;
+        source = "template";
+      }
+    } else {
+      // No Gemini key — use template engine directly
+      const tmpl = generateColdEmail({
+        recipientName,
+        company,
+        role: role || "",
+        goal: goal || "Schedule a demo call",
+        tone: tone || "Professional",
+        extraContext: extraContext || "",
+      });
+      subject = tmpl.subject;
+      body = tmpl.body;
+      source = "template";
+    }
 
     // Save to DB
     const email = await Email.create({
@@ -51,16 +88,10 @@ router.post("/generate", async (req, res) => {
       body: email.body,
       metadata: email.metadata,
       createdAt: email.createdAt,
+      source,
     });
   } catch (err) {
     console.error("Generate email error:", err);
-
-    // Return meaningful error for rate limits
-    if (err.status === 429) {
-      return res.status(429).json({
-        message: "AI rate limit exceeded. Please wait a minute and try again.",
-      });
-    }
 
     res.status(500).json({ message: "Failed to generate email. Please try again." });
   }

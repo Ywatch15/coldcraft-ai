@@ -2,6 +2,7 @@ const express = require("express");
 const User = require("../models/User");
 const { signToken } = require("../middleware/auth");
 const { generateOTP, otpExpiry } = require("../utils/otp");
+const { sendOTPEmail } = require("../utils/mailer");
 
 const router = express.Router();
 
@@ -42,9 +43,20 @@ router.post("/register", async (req, res) => {
       });
     }
 
-    // In production, send OTP via email service (SendGrid, etc.)
-    // For now, log it to console for development
-    console.log(`[OTP] ${email}: ${otpCode}`);
+    // Send OTP via Nodemailer (production) or log to console (dev)
+    if (process.env.SMTP_USER && process.env.SMTP_PASS) {
+      try {
+        await sendOTPEmail(email.toLowerCase(), otpCode);
+        console.log(`[OTP] Email sent to ${email}`);
+      } catch (mailErr) {
+        console.error("Mailer error:", mailErr.message);
+        // Still log OTP so dev/testing isn't blocked if mail fails
+        console.log(`[OTP] ${email}: ${otpCode}`);
+      }
+    } else {
+      // No SMTP configured — dev mode, log to console
+      console.log(`[OTP] ${email}: ${otpCode}`);
+    }
 
     res.status(200).json({
       message: "OTP sent to your email",

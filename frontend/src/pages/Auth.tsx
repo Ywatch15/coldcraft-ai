@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { toast } from "@/hooks/use-toast";
-import { Zap, ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import ShaderBackground from "@/components/ui/animated-shader-background";
 
@@ -90,9 +90,7 @@ const Auth = () => {
         >
           <Card className="border-white/[0.1] bg-black/60 backdrop-blur-2xl shadow-2xl">
             <CardHeader className="text-center">
-              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-r from-indigo-500 to-rose-500">
-                <Zap className="h-6 w-6 text-white" />
-              </div>
+              <img src="/image.png" alt="ColdCraft" className="mx-auto mb-3 h-12 w-12 rounded-xl object-cover" />
               <AnimatePresence mode="wait">
                 <motion.div
                   key={step}

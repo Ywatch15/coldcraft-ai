@@ -32,6 +32,14 @@ export function TubesBackground({
     const initTubes = async () => {
       if (!canvasRef.current) return;
 
+      // Wait until the canvas has actual dimensions to prevent texture size errors
+      const rect = canvasRef.current.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) {
+        // Retry on next frame
+        requestAnimationFrame(() => { if (mounted) initTubes(); });
+        return;
+      }
+
       try {
         // @ts-expect-error CDN dynamic import has no type declarations
         const module = await import('https://cdn.jsdelivr.net/npm/threejs-components@0.0.19/build/cursors/tubes1.min.js');

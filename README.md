@@ -2,7 +2,11 @@
   <img src="frontend/public/image.png" alt="ColdCraft AI" width="120" height="120" style="border-radius: 16px;" />
 </p>
 
-<h1 align="center">ColdCraft AI</h1>
+<h1 align="center">
+  <a href="https://coldcraft-frontend.onrender.com/" target="_blank" style="text-decoration: none; color: inherit;">
+    ColdCraft AI
+  </a>
+</h1>
 <p align="center">
   <strong>AI-Powered Cold Email Generator</strong><br/>
   Craft hyper-personalized outreach emails that actually get replies.

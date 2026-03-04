@@ -180,8 +180,12 @@ JWT_EXPIRY=7d
 GEMINI_API_KEY=<your-gemini-api-key>
 
 # ─── Nodemailer (Gmail SMTP) ──────────────────────────
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
 SMTP_USER=your-email@gmail.com
 SMTP_PASS=<your-gmail-app-password>
+
+EMAIL_FROM="ColdCraft AI <your-email@gmail.com>"
 
 # ─── CORS ─────────────────────────────────────────────
 FRONTEND_URL=http://localhost:8080
@@ -304,7 +308,7 @@ ColdCraft uses a **Render Blueprint** (`render.yaml`) that provisions both servi
 
 3. **Deploy on Render**
    - Go to [Render Dashboard](https://dashboard.render.com/) → **New** → **Blueprint**
-   - Connect your GitHub repository (`Ywatch15/coldcraft-ai`)
+   - Connect your GitHub repository (`Your Username\Project name`)
    - Render auto-detects `render.yaml` and creates two services:
      - `coldcraft-api` — Node.js Web Service (backend)
      - `coldcraft-frontend` — Static Site (frontend)
@@ -317,9 +321,12 @@ ColdCraft uses a **Render Blueprint** (`render.yaml`) that provisions both servi
    |----------|-------|-------|
    | `MONGODB_URI` | `mongodb+srv://...` | Your Atlas connection string |
    | `JWT_SECRET` | `<random-64-chars>` | Generate with `openssl rand -hex 32` |
-   | `GEMINI_API_KEY` | `AIza...` | From [Google AI Studio](https://aistudio.google.com/apikey) |
+   | `GEMINI_API_KEY` | `AI......` | From [Google AI Studio](https://aistudio.google.com/apikey) |
+   | `SMTP_HOST` | `smtp.gmail.com` | SMTP server hostname |
+   | `SMTP_PORT` | `587` | SMTP port (587 = STARTTLS) |
    | `SMTP_USER` | `your-email@gmail.com` | Your Gmail address |
    | `SMTP_PASS` | `xxxx xxxx xxxx xxxx` | Gmail App Password |
+   | `EMAIL_FROM` | `"ColdCraft AI <your-email@gmail.com>"` | Sender name & address |
 
    > `NODE_ENV`, `DB_NAME`, `JWT_EXPIRY`, and `FRONTEND_URL` are already set in `render.yaml`.
    >

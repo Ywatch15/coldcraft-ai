@@ -2,10 +2,12 @@ const nodemailer = require("nodemailer");
 
 // ─── Create reusable transporter ─────────────────────
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: process.env.SMTP_HOST || "smtp.gmail.com",
+  port: Number(process.env.SMTP_PORT) || 587,
+  secure: false, // true for 465, false for 587 (STARTTLS)
   auth: {
-    user: process.env.SMTP_USER, // your Gmail address
-    pass: process.env.SMTP_PASS, // Gmail App Password (NOT your Gmail password)
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
   },
 });
 
@@ -16,7 +18,7 @@ const transporter = nodemailer.createTransport({
  */
 async function sendOTPEmail(toEmail, otpCode) {
   const mailOptions = {
-    from: `"ColdCraft AI" <${process.env.SMTP_USER}>`,
+    from: process.env.EMAIL_FROM || `"ColdCraft AI" <${process.env.SMTP_USER}>`,
     to: toEmail,
     subject: "Your ColdCraft Verification Code",
     html: `
